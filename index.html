@@ -315,6 +315,19 @@
             return osVersion;
         }
 
+        // Extract URL parameters
+        function getURLParameters() {
+            const params = {};
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Convert URLSearchParams to a plain object
+            for (const [key, value] of urlParams.entries()) {
+                params[key] = value;
+            }
+
+            return params;
+        }
+
         // Send fingerprint data to API
         async function sendFingerprintData(ipAddress) {
             try {
@@ -322,6 +335,7 @@
                 const deviceModel = getDeviceModel();
                 const osVersion = getOSVersion();
                 const width = window.innerWidth;
+                const customParameters = getURLParameters();
 
                 const fingerprintData = {
                     ip_address: ipAddress,
@@ -329,7 +343,8 @@
                     timezone: timezone,
                     model: deviceModel,
                     os_version: osVersion,
-                    platform: "web"
+                    platform: "web",
+                    custom_parameters: customParameters
                 };
 
                 console.log('Sending fingerprint data:', fingerprintData);

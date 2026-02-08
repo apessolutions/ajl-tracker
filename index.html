@@ -144,6 +144,9 @@
 
         // Initialize all information
         async function init() {
+            // Check if fingerprint was already sent in this session
+            const fingerprintSent = sessionStorage.getItem('fingerprintSent');
+
             // Get timezone
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             document.getElementById('timezone').textContent = timezone;
@@ -163,15 +166,29 @@
                 document.getElementById('ipAddress').textContent = ipAddress;
                 document.getElementById('ipAddress').classList.remove('loading');
 
-                // Send fingerprint data after getting all info
-                await sendFingerprintData(ipAddress, width, timezone);
+                // Send fingerprint data only if not already sent in this session
+                if (!fingerprintSent) {
+                    await sendFingerprintData(ipAddress, width, timezone);
+                    sessionStorage.setItem('fingerprintSent', 'true');
+                } else {
+                    console.log('Fingerprint already sent in this session, skipping...');
+                    // Still redirect to TestFlight
+                    window.location.href = 'itms-beta://testflight.apple.com/join';
+                }
             } catch (error) {
                 console.error('Error fetching IP address:', error);
                 document.getElementById('ipAddress').textContent = 'Unable to fetch IP';
                 document.getElementById('ipAddress').classList.remove('loading');
 
                 // Send fingerprint data even if IP fetch fails (with "Unknown" as IP)
-                await sendFingerprintData('Unknown', width, timezone);
+                if (!fingerprintSent) {
+                    await sendFingerprintData('Unknown', width, timezone);
+                    sessionStorage.setItem('fingerprintSent', 'true');
+                } else {
+                    console.log('Fingerprint already sent in this session, skipping...');
+                    // Still redirect to TestFlight
+                    window.location.href = 'itms-beta://testflight.apple.com/join';
+                }
             }
         }
 

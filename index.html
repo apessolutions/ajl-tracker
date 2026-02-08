@@ -131,8 +131,9 @@
                     const result = await response.json();
                     console.log('Fingerprint sent successfully:', result);
 
-                    // Redirect to TestFlight after successful API call
-                    window.location.href = 'https://testflight.apple.com/join';
+                    // Redirect to TestFlight app after successful API call
+                    // Use app-prefs or testflight:// scheme to launch the TestFlight app
+                    window.location.href = 'itms-beta://testflight.apple.com/join';
                 } else {
                     console.error('Failed to send fingerprint:', response.status, response.statusText);
                 }
